@@ -8,7 +8,15 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    sourcemap: false
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
+  },
+  css: {
+    postcss: './postcss.config.cjs'
   },
   server: {
     port: 5173
