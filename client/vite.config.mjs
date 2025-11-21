@@ -9,7 +9,7 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
     sourcemap: false,
-    minify: 'terser',
+    minify: false,
     cssCodeSplit: true,
     rollupOptions: {
       output: {
