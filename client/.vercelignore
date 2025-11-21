@@ -3,15 +3,14 @@ node_modules
 .env
 .env.local
 .env.*.local
-src
 public
 *.md
 .gitignore
 .npmrc
-vite.config.mjs
 postcss.config.cjs
 tailwind.config.cjs
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
 .eslintrc
+build.sh
