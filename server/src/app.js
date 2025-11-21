@@ -73,14 +73,30 @@ app.use(async (req, res, next) => {
   }
 });
 
-app.get('/api/health', (req, res) => {
-  const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
-  res.json({ 
-    status: 'ok', 
-    message: 'WealthWise API is running',
-    database: dbStatus,
-    timestamp: new Date().toISOString()
-  });
+app.get('/api/health', async (req, res) => {
+  try {
+    // Ensure connection is established
+    if (mongoose.connection.readyState !== 1) {
+      await connectDB();
+    }
+    
+    const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+    res.json({ 
+      status: 'ok', 
+      message: 'WealthWise API is running',
+      database: dbStatus,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('[health] Error:', error.message);
+    res.json({ 
+      status: 'ok', 
+      message: 'WealthWise API is running',
+      database: 'error',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 // Diagnostic endpoint to test connection
