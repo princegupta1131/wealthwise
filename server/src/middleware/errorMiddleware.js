@@ -24,10 +24,35 @@ export const notFoundHandler = (req, res, next) => {
  * @param {import('express').NextFunction} next
  */
 export const errorHandler = (err, req, res, next) => {
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  let message = err.message;
+
+  // Handle MongoDB timeout errors
+  if (err.name === 'MongooseError' || message.includes('buffering timed out')) {
+    statusCode = 503;
+    message = 'Database connection timeout. Please try again.';
+    console.error('MongoDB Error:', err.message);
+  }
+
+  // Handle MongoDB connection errors
+  if (message.includes('connect ECONNREFUSED') || message.includes('getaddrinfo ENOTFOUND')) {
+    statusCode = 503;
+    message = 'Database service unavailable. Please try again later.';
+    console.error('Connection Error:', err.message);
+  }
+
+  // Log detailed errors in production
+  if (process.env.NODE_ENV === 'production') {
+    console.error(`[${new Date().toISOString()}] Error:`, {
+      status: statusCode,
+      message: err.message,
+      path: req.originalUrl,
+      method: req.method
+    });
+  }
 
   res.status(statusCode).json({
-    message: err.message,
-    stack: process.env.NODE_ENV === 'production' ? undefined : err.stack
+    message,
+    ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })
   });
 };
