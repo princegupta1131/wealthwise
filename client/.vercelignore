@@ -7,8 +7,6 @@ public
 *.md
 .gitignore
 .npmrc
-postcss.config.cjs
-tailwind.config.cjs
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
